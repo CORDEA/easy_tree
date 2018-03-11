@@ -1,11 +1,6 @@
 module csv_parser
+    use element
     implicit none
-    type string_element
-        character(:), allocatable :: string
-    end type string_element
-    type child_element
-        type(string_element), allocatable, dimension(:) :: child
-    end type child_element
 contains
     function parse_csv(csv)
         character(*), intent(in) :: csv
