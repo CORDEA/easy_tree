@@ -2,30 +2,13 @@ module csv_parser
     use element
     implicit none
 contains
-    function parse_csv(csv)
-        character(*), intent(in) :: csv
-        character(:), allocatable :: row
-        character(2), parameter :: newline = '\n'
+    function parse_csv(lines)
+        type(string_element), allocatable, dimension(:) :: lines
         type(child_element), allocatable, dimension(:) :: parse_csv
-        integer :: i, j
-        row = ''
-        allocate(parse_csv(count(csv, newline) + 1))
-        i = 1
-        j = 1
-        do
-            if (csv(i:i+1) == newline) then
-                parse_csv(j)%child = split(row)
-                row = ''
-                j = j + 1
-                i = i + 2
-                cycle
-            end if
-            row = row // csv(i:i)
-            if (i == len(csv)) then
-                parse_csv(j)%child = split(row)
-                exit
-            end if
-            i = i + 1
+        integer :: i
+        allocate(parse_csv(size(lines)))
+        do i = 1, size(lines)
+            parse_csv(i)%child = split(lines(i)%string)
         end do
     end function
 
