@@ -1,6 +1,7 @@
 program easy_tree
     use csv_parser
     use file_reader
+    use formatter
     implicit none
     character(12), parameter :: csv = "test.csv"
     call main(csv)
@@ -12,10 +13,6 @@ contains
         integer :: i, j
         lines = read_file(csv)
         parsed = parse_csv(lines)
-        do i = 1, size(parsed)
-            do j = 1, size(parsed(i)%child)
-                print *, parsed(i)%child(j)%string
-            end do
-        end do
+        print *, format(parsed)
     end subroutine
 end program easy_tree
