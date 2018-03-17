@@ -22,7 +22,7 @@ contains
                     row = row // branch_link
                     cycle
                 end if
-                row = row // lines(i)%child(j)%string
+                row = row // ' ' // lines(i)%child(j)%string
             end do
             format = format // new_line('A') // row
         end do
