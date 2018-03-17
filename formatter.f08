@@ -12,7 +12,11 @@ contains
         integer :: i, j
         format = root
         do i = 1, size(lines)
-            row = branch
+            if (i == size(lines)) then
+                row = branch_end
+            else
+                row = branch
+            end if
             do j = 1, size(lines(i)%child)
                 if (len(lines(i)%child(j)%string) == 0) then
                     row = row // branch_link
