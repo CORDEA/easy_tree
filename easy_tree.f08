@@ -13,6 +13,6 @@ contains
         integer :: i, j
         lines = read_file(csv)
         parsed = parse_csv(lines)
-        print *, format(parsed)
+        write(*, '(A)') format(parsed)
     end subroutine
 end program easy_tree
