@@ -2,9 +2,9 @@ module formatter
     use element
     implicit none
     character(1), parameter :: root = "."
-    character(4), parameter :: branch = "├"
-    character(4), parameter :: branch_end = "└"
-    character(4), parameter :: branch_link = "─"
+    character(3), parameter :: branch = "├"
+    character(3), parameter :: branch_end = "└"
+    character(3), parameter :: branch_link = "─"
 contains
     function format(lines)
         type(child_element), allocatable, dimension(:) :: lines
