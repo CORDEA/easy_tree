@@ -22,12 +22,12 @@ contains
             else
                 next_indent = 0
             end if
-            if ( .not. prev_indent == 0 .and. prev_indent <= indent) then
+            if (indent == 1) then
+                row = branch // branch_link // branch_link
+            else if ( .not. prev_indent == 0 .and. prev_indent <= indent) then
                 row = branch_pipe
             else if (i == size(lines)) then
                 row = branch_end
-            else
-                row = branch // branch_link // branch_link
             end if
             do j = 1, indent
                 if ( .not. len(lines(i)%child(j)%string) == 0) then
