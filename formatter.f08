@@ -11,10 +11,11 @@ contains
     function format(lines)
         type(child_element), allocatable, dimension(:) :: lines
         character(:), allocatable :: format, row
-        integer :: i, j
+        integer :: i, j, last
         integer :: indent, prev_indent, next_indent
         format = root
         prev_indent = 0
+        last = find_last(lines)
         do i = 1, size(lines)
             indent = size(lines(i)%child)
             if (size(lines) > i) then
@@ -22,7 +23,11 @@ contains
             else
                 next_indent = 0
             end if
-            if (indent == 1) then
+            if (last < i) then
+                row = space
+            else if (last == i) then
+                row = branch_end // branch_link // branch_link
+            else if (indent == 1) then
                 row = branch // branch_link // branch_link
             else if ( .not. prev_indent == 0 .and. prev_indent <= indent) then
                 row = branch_pipe
@@ -50,6 +55,17 @@ contains
             end do
             format = format // new_line('A') // row
             prev_indent = indent
+        end do
+    end function
+
+    function find_last(lines)
+        type(child_element), allocatable, dimension(:) :: lines
+        integer :: i, find_last
+
+        do i = 1, size(lines)
+            if ( .not. len(lines(i)%child(1)%string) == 0) then
+                find_last = i
+            end if
         end do
     end function
 end module formatter
