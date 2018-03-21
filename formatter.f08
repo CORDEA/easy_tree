@@ -50,7 +50,7 @@ contains
                 end if
                 if (prev_indent <= indent) then
                     if (j == indent - 1) then
-                        if (indent > next_indent .or. contents(j) == (actual(j) + 1)) then
+                        if (should_show_end(contents, actual, indent, next_indent, j)) then
                             row = row // branch_end // branch_link // branch_link
                         else
                             row = row // branch // branch_link // branch_link
@@ -65,6 +65,18 @@ contains
             format = format // new_line('A') // row
             prev_indent = indent
         end do
+    end function
+
+    function should_show_end(contents, actual, indent, next_indent, index)
+        integer, dimension(:), intent(in) :: contents, actual
+        integer :: indent, next_indent, index
+        logical(1) :: should_show_end
+        should_show_end = .false.
+        if ((next_indent > indent .and. contents(index) > actual(index)) &
+            & .or. indent > next_indent &
+            & .or. contents(index) == (actual(index) + 1)) then
+            should_show_end = .true.
+        end if
     end function
 
     function max_indent(lines)
