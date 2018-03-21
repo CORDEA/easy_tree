@@ -10,9 +10,10 @@ contains
         type(child_element), allocatable, dimension(:) :: parsed
         type(string_element), allocatable, dimension(:) :: lines
         character(*), intent(in) :: csv
-        integer :: i, j
+        integer :: i, j, max
         lines = read_file(csv)
         parsed = parse_csv(lines)
-        write(*, '(A)') format(parsed)
+        max = max_indent(parsed)
+        write(*, '(A)') format(parsed, max)
     end subroutine
 end program easy_tree

@@ -8,14 +8,21 @@ module formatter
     character(8), parameter :: branch_pipe = "│   "
     character(3), parameter :: branch_link = "─"
 contains
-    function format(lines)
+    function format(lines, max)
         type(child_element), allocatable, dimension(:) :: lines
+        integer, intent(in) :: max
+        integer, dimension(max) :: contents
+        integer, allocatable, dimension(:) :: actual
+        integer :: i, j
         character(:), allocatable :: format, row
-        integer :: i, j, last
         integer :: indent, prev_indent, next_indent
         format = root
         prev_indent = 0
-        last = find_last(lines)
+
+        allocate(actual(max))
+        contents = find_contents(lines, max)
+        actual = 0
+
         do i = 1, size(lines)
             indent = size(lines(i)%child)
             if (size(lines) > i) then
@@ -23,10 +30,11 @@ contains
             else
                 next_indent = 0
             end if
-            if (last < i) then
+            if (contents(1) <= actual(1)) then
                 row = space
-            else if (last == i) then
+            else if (contents(1) == actual(1) + 1) then
                 row = branch_end // branch_link // branch_link
+                actual(1) = actual(1) + 1
             else if (indent == 1) then
                 row = branch // branch_link // branch_link
             else if ( .not. prev_indent == 0 .and. prev_indent <= indent) then
@@ -37,14 +45,15 @@ contains
             do j = 1, indent
                 if ( .not. len(lines(i)%child(j)%string) == 0) then
                     row = row // ' ' // lines(i)%child(j)%string
+                    actual(j) = actual(j) + 1
                     cycle
                 end if
                 if (prev_indent <= indent) then
                     if (j == indent - 1) then
-                        if (indent == next_indent) then
-                            row = row // branch // branch_link // branch_link
-                        else
+                        if (indent > next_indent .or. contents(j) == (actual(j) + 1)) then
                             row = row // branch_end // branch_link // branch_link
+                        else
+                            row = row // branch // branch_link // branch_link
                         end if
                     else
                         row = row // space
@@ -58,14 +67,30 @@ contains
         end do
     end function
 
-    function find_last(lines)
-        type(child_element), allocatable, dimension(:) :: lines
-        integer :: i, find_last
+    function max_indent(lines)
+        type(child_element), intent(in) :: lines(:)
+        integer :: i, max_indent
 
-        do i = 1, size(lines)
-            if ( .not. len(lines(i)%child(1)%string) == 0) then
-                find_last = i
+        max_indent = 0
+        do i = 1, ubound(lines, 1)
+            if (max_indent < size(lines(i)%child)) then
+                max_indent = size(lines(i)%child)
             end if
+        end do
+    end function
+
+    function find_contents(lines, max)
+        type(child_element), intent(in) :: lines(:)
+        integer :: i, j, max
+        integer, dimension(max) :: find_contents
+
+        find_contents = 0
+        do i = 1, ubound(lines, 1)
+            do j = 1, size(lines(i)%child)
+                if ( .not. len(lines(i)%child(j)%string) == 0) then
+                    find_contents(j) = find_contents(j) + 1
+                end if
+            end do
         end do
     end function
 end module formatter
